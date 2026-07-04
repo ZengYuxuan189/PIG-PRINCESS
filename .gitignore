@@ -1,5 +1,6 @@
-# 操作系统
+# 系统文件
 .DS_Store
+Desktop.ini
 Thumbs.db
 
 # 编辑器

@@ -4,18 +4,17 @@
     "planning-with-files-zh": {
       "enabled": true,
       "description": "中文任务规划体系，跟踪开发阶段和进度"
+    },
+    "frontend-design": {
+      "enabled": true,
+      "description": "像素风 UI 设计辅助，确保界面不落俗套"
     }
   },
   "hooks": {
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo \"文件已修改，记得适时更新 progress.md 和 task_plan.md\""
-          }
-        ]
+        "command": "echo \"[提醒] 文件已修改，记得适时更新 progress.md 和 task_plan.md\""
       }
     ]
   },
@@ -26,7 +25,11 @@
       "Bash(ls:*)",
       "Bash(find:*)",
       "Bash(cd:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(python:*)",
+      "Bash(npx:*)"
     ]
   }
 }

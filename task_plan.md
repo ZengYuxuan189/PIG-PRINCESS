@@ -4,7 +4,7 @@
 制作一个 Windows 上双击 index.html 即可运行的纯静态网页，功能：上传照片 → 框选人物 → 像素化 → 生成动图 GIF。Nes 8-bit 像素风，全中文界面。
 
 ## 当前阶段
-阶段 0：环境配置
+阶段 1：HTML 骨架 + CSS 像素主题
 
 ## 各阶段
 
@@ -13,9 +13,9 @@
 - [x] 创建 .gitignore
 - [x] 创建 Git Worktree（pixel-dev）
 - [x] 编写 CLAUDE.md 项目文档
-- [ ] 配置项目 skills 和 settings
-- [ ] 建立任务规划体系（本文件）
-- **状态：** in_progress
+- [x] 配置项目 skills 和 settings
+- [x] 建立任务规划体系（本文件）
+- **状态：** complete
 
 ### 阶段 1：HTML 骨架 + CSS 像素主题
 - [ ] 创建 index.html 主页面结构
