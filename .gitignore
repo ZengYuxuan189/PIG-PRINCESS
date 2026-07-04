@@ -10,5 +10,8 @@ Thumbs.db
 *.tmp
 *.log
 
+# Claude 工作区
+.claude/worktrees/
+
 # 生成的用户图片（测试输出）
 test-output/

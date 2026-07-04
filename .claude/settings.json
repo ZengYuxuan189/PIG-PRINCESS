@@ -1,0 +1,32 @@
+{
+  "description": "像素表情包工厂 — 纯静态网页项目。NES 像素风，全中文界面，零依赖，双击 index.html 运行。",
+  "skills": {
+    "planning-with-files-zh": {
+      "enabled": true,
+      "description": "中文任务规划体系，跟踪开发阶段和进度"
+    }
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"文件已修改，记得适时更新 progress.md 和 task_plan.md\""
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(cd:*)",
+      "Bash(echo:*)"
+    ]
+  }
+}
