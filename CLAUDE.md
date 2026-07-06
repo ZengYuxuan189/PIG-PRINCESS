@@ -1,7 +1,7 @@
 # 像素表情包工厂 — 项目文档
 
 ## 项目概述
-一个 Windows 上运行的纯静态网页应用，将照片人物转化为像素风格表情包并生成动图 GIF。
+一个 Windows 上运行的纯静态网页应用，将照片人物通过火山方舟 Seedream 5.0 AI 转化为像素风格角色，再用像素配件自由装饰后导出成品。
 双击 `index.html` 即可在浏览器中运行，无需任何服务器或构建工具。
 
 ## 目标用户
@@ -28,20 +28,29 @@
 ## 项目结构
 ```
 pixel-emoji-web/
-├── index.html              # 主页面
+├── index.html              # 主页面（4步骤面板）
 ├── css/
 │   └── pixel-theme.css     # 像素风格主题
 ├── js/
-│   ├── app.js              # 主流程
-│   ├── pixelate.js         # 像素化算法
-│   ├── color-quantize.js   # 颜色量化 ✅
-│   ├── animation.js        # 动画引擎
-│   ├── gif-encoder.js      # GIF 编码器
-│   └── nes-palette.js      # NES 调色板 ✅
-├── assets/                 # 静态资源
+│   ├── app.js              # 主流程控制器
+│   ├── seedream-api.js     # Seedream 5.0 API 集成
+│   ├── prompt-templates.js # 提示词模板系统（6套）
+│   ├── accessories.js      # 像素配件库（38个配件 + 6大类）
+│   └── bouncing-decorations.js # 背景装饰动画
+├── example/                # 测试图片素材
 ├── CLAUDE.md               # 本文件
 └── .gitignore
 ```
+
+## ⚠️ 重要规则
+
+**在没有完全搞清楚用户需求时，必须先向用户提问，直到完全理解用户需求后再动手写代码。**
+
+- 不要猜测用户想要什么
+- 不要看到不完整的需求就开始实现
+- 用简洁的问题逐一确认关键细节
+- 用户给了参考图片/文件时，先仔细分析，再提问确认理解是否正确
+- 确认理解后，先说明方案，再动手
 
 ## 代码约定
 - 所有变量名和函数名使用英文（驼峰命名）
@@ -51,18 +60,23 @@ pixel-emoji-web/
 - 使用 ES6+ 语法（const/let、箭头函数、模板字符串）
 
 ## 已完成模块
-- ✅ `js/nes-palette.js` — NES 56 色调色板 + 5 套配色方案
-- ✅ `js/color-quantize.js` — 颜色量化算法
+- ✅ `index.html` — 主页面 4 步骤框架 + 像素风 UI 结构
+- ✅ `css/pixel-theme.css` — NES 8-bit 像素风主题样式
+- ✅ `js/app.js` — 步骤切换控制器 + 全局状态管理
+- ✅ `js/seedream-api.js` — Seedream 5.0 图生图 API 封装
+- ✅ `js/prompt-templates.js` — 6 套提示词模板（经典NES/可爱Q版/格斗/日系RPG/搞笑/自定义）
+- ✅ `js/accessories.js` — 38个像素配件 + 6风格分类 + 拖放管理器
+- ✅ `js/bouncing-decorations.js` — 背景弹跳像素装饰
 
-## 待开发模块（按阶段）
-1. `index.html` + `css/pixel-theme.css` — 页面骨架 + 像素风 UI
-2. `js/app.js` — 主流程控制
-3. 图片上传 + 裁剪功能
-4. `js/pixelate.js` — 像素化核心算法
-5. 编辑控件（滑块、调色板选择）
-6. `js/animation.js` — 动画引擎
-7. `js/gif-encoder.js` — GIF 编码器
-8. 动图预览 + 下载
+## 待开发模块
+- 更多配件（可随时扩充 accessories.js）
+- 配件层级调整（上移/下移）
+- 配件旋转/翻转
+- 8-bit 音效（可选，Web Audio API）
+
+## 项目状态
+- 当前阶段：**v4 配件版完成** — Seedream 5.0 + 38个像素配件 + 自由拖放（2026-07-06）
+- 下一阶段：**测试调试** — 全流程验证 + API 联调
 
 ## 未来可优化方向
 - 🔮 AI 人像分割：使用 MediaPipe Selfie Segmentation（浏览器端免费运行）
@@ -73,7 +87,3 @@ pixel-emoji-web/
 - 🎨 更多配色方案和动画模板
 - 🖼️ 批量处理：一次上传多张照片
 - 🔧 像素级手动编辑：点击修改单个像素格颜色
-
-## 项目状态
-- 当前阶段：**阶段 1** — HTML 骨架 + CSS 像素主题（2026-07-04）
-- 下一阶段：**阶段 2** — 图片上传 + 裁剪框选

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIG PRINCESS — 像素表情包工厂</title>
+  <link rel="stylesheet" href="css/pixel-theme.css">
+</head>
+<body>
+  <!-- 像素网格背景 -->
+  <div class="pixel-bg"></div>
+  <!-- 弹跳像素装饰画布 -->
+  <canvas id="decoCanvas" class="deco-canvas"></canvas>
+  <!-- 浮动像素装饰 -->
+  <div class="pixel-decorations" aria-hidden="true">
+    <span class="deco-block deco-1">■</span>
+    <span class="deco-block deco-2">■</span>
+    <span class="deco-block deco-3">◆</span>
+    <span class="deco-block deco-4">■</span>
+    <span class="deco-block deco-5">●</span>
+    <span class="deco-block deco-6">■</span>
+  </div>
+
+  <div class="app-container">
+
+    <!-- ====== 标题栏 ====== -->
+    <header class="app-header">
+      <div class="header-top">
+        <div class="header-ornament left">
+          <span>★</span><span>■</span><span>★</span>
+        </div>
+        <h1 class="pixel-title title-en">
+          <span class="title-char c1">P</span>
+          <span class="title-char c2">I</span>
+          <span class="title-char c3">G</span>
+          <span class="title-char c4">&nbsp;</span>
+          <span class="title-char c5">P</span>
+          <span class="title-char c6">R</span>
+          <span class="title-char c7">I</span>
+          <span class="title-char c8">N</span>
+          <span class="title-char c9">C</span>
+          <span class="title-char c10">E</span>
+          <span class="title-char c11">S</span>
+          <span class="title-char c12">S</span>
+        </h1>
+        <div class="header-ornament right">
+          <span>★</span><span>■</span><span>★</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ====== 步骤指示器 ====== -->
+    <nav class="step-indicator" aria-label="步骤导航">
+      <button class="step active" data-step="1" aria-current="step">
+        <span class="step-icon">📷</span>
+        <span class="step-num">01</span>
+      </button>
+      <span class="step-arrow">▶</span>
+      <button class="step" data-step="2">
+        <span class="step-icon">✏️</span>
+        <span class="step-num">02</span>
+      </button>
+      <span class="step-arrow">▶</span>
+      <button class="step" data-step="3">
+        <span class="step-icon">🤖</span>
+        <span class="step-num">03</span>
+      </button>
+      <span class="step-arrow">▶</span>
+      <button class="step" data-step="4">
+        <span class="step-icon">🎞️</span>
+        <span class="step-num">04</span>
+      </button>
+    </nav>
+
+    <!-- ====== 主内容区 ====== -->
+    <main class="main-content">
+
+      <!-- ====== 步骤 ①：上传照片 + API Key ====== -->
+      <section class="step-panel active" id="panel-step1" aria-labelledby="step1-title">
+        <div class="panel-frame">
+          <div class="panel-header">
+            <h2 class="panel-title" id="step1-title">
+              <span class="title-num">①</span> 上传照片
+            </h2>
+            <p class="panel-desc">选择一张包含人物的照片，Seedream AI 将把它转化为像素风格</p>
+          </div>
+          <div class="panel-body">
+            <div class="upload-zone" id="uploadZone" tabindex="0">
+              <div class="upload-zone-inner">
+                <div class="pixel-icon folder-icon" aria-hidden="true">
+                  <div class="folder-top"></div>
+                  <div class="folder-body"></div>
+                </div>
+                <h3 class="upload-title">拖拽图片到此处</h3>
+                <div class="upload-divider">
+                  <span class="divider-line"></span>
+                  <span class="divider-text">或</span>
+                  <span class="divider-line"></span>
+                </div>
+                <button class="pixel-btn pixel-btn--primary" id="selectFileBtn" type="button">
+                  点 击 选 择 文 件
+                </button>
+                <p class="upload-hint">
+                  <span class="hint-icon">💡</span>
+                  支持 JPG / PNG / GIF / WebP &nbsp;·&nbsp; 也可以 <kbd>Ctrl+V</kbd> 粘贴图片
+                </p>
+              </div>
+              <input type="file" id="fileInput" accept="image/*" hidden>
+            </div>
+
+            <!-- Seedream API Key 设置 -->
+            <div class="api-key-section">
+              <div class="api-key-header">
+                <span class="api-key-icon">🔑</span>
+                <span class="api-key-label">Seedream API Key</span>
+                <span class="api-key-hint">（必填，保存在浏览器中）</span>
+              </div>
+              <div class="api-key-row">
+                <input type="password" id="apiKeyInput" placeholder="粘贴你的 Seedream API Key..."
+                  class="api-key-input">
+                <button class="pixel-btn pixel-btn--small" id="saveKeyBtn" type="button">
+                  💾 保存
+                </button>
+              </div>
+              <p class="api-key-note">
+                获取方式：<a href="https://console.volcengine.com/ark" target="_blank"
+                  class="api-key-link">火山方舟控制台 → API密钥管理</a>
+                &nbsp;·&nbsp; Key 仅保存在你的浏览器中
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 步骤 ②：提示词配置 ====== -->
+      <section class="step-panel" id="panel-step2" aria-labelledby="step2-title">
+        <div class="panel-frame">
+          <div class="panel-header">
+            <h2 class="panel-title" id="step2-title">
+              <span class="title-num">②</span> 提示词配置
+            </h2>
+            <p class="panel-desc">选择风格模板或自由编辑提示词，控制 AI 生成效果</p>
+          </div>
+          <div class="panel-body">
+            <!-- 模板选择 -->
+            <div class="control-card">
+              <div class="control-header">
+                <span class="control-icon">🎮</span>
+                <span class="control-label">风格模板</span>
+              </div>
+              <div class="template-grid" id="promptTemplateGrid">
+                <!-- 由 app.js 动态生成 -->
+              </div>
+            </div>
+
+            <!-- 提示词编辑 -->
+            <div class="control-card" style="margin-top: 12px;">
+              <div class="control-header">
+                <span class="control-icon">📝</span>
+                <span class="control-label">提示词编辑</span>
+                <span class="char-counter" id="charCounter">0 / 300 字</span>
+              </div>
+              <textarea id="promptTextarea" class="prompt-textarea"
+                placeholder="在此编辑提示词，告诉 AI 你想要的像素风格效果..."
+                rows="5"></textarea>
+              <div class="prompt-actions">
+                <button class="pixel-btn pixel-btn--small" id="resetPromptBtn" type="button">
+                  🔄 恢复默认
+                </button>
+                <button class="pixel-btn pixel-btn--primary" id="confirmPromptBtn" type="button">
+                  ✅ 确认提示词，开始生成
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 步骤 ③：AI 生成像素图 ====== -->
+      <section class="step-panel" id="panel-step3" aria-labelledby="step3-title">
+        <div class="panel-frame">
+          <div class="panel-header">
+            <h2 class="panel-title" id="step3-title">
+              <span class="title-num">③</span> AI 生成像素图
+            </h2>
+            <p class="panel-desc">Seedream 5.0 图生图 → NES 8-bit 像素精灵</p>
+          </div>
+          <div class="panel-body">
+            <div class="gen-layout">
+              <!-- 左侧：预览 -->
+              <div class="gen-preview">
+                <div class="canvas-stage" id="pixelStage">
+                  <canvas id="pixelCanvas"></canvas>
+                  <div class="stage-placeholder" id="pixelPlaceholder">
+                    <div class="placeholder-icon">🤖</div>
+                    <p id="pixelStatus">确认提示词后点击生成</p>
+                  </div>
+                </div>
+              </div>
+              <!-- 右侧：控件 -->
+              <div class="gen-controls">
+                <div class="control-card">
+                  <div class="control-header">
+                    <span class="control-icon">📐</span>
+                    <span class="control-label">输出尺寸</span>
+                  </div>
+                  <div class="control-body">
+                    <label class="toggle-row">
+                      <input type="radio" name="outputSize" value="2K" checked>
+                      <span class="toggle-track">
+                        <span class="toggle-thumb"></span>
+                      </span>
+                      <span>2K（推荐）</span>
+                    </label>
+                  </div>
+                </div>
+
+                <button class="pixel-btn pixel-btn--primary" id="generateBtn" type="button"
+                  style="width:100%; margin-top:12px;">
+                  🚀 生成像素图
+                </button>
+
+                <button class="pixel-btn" id="backToPromptBtn" type="button"
+                  style="width:100%; margin-top:8px;">
+                  ✏️ 修改提示词
+                </button>
+
+                <button class="pixel-btn pixel-btn--primary pixel-btn--large" id="downloadPngBtn" type="button"
+                  style="width:100%; margin-top:12px;" disabled>
+                  💾 下载 PNG 图片
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== 步骤 ④：配件装饰 ====== -->
+      <section class="step-panel" id="panel-step4" aria-labelledby="step4-title">
+        <div class="panel-frame">
+          <div class="panel-header">
+            <h2 class="panel-title" id="step4-title">
+              <span class="title-num">④</span> 配件装饰
+            </h2>
+            <p class="panel-desc">选择像素配件，自由拖放装饰你的角色</p>
+          </div>
+          <div class="panel-body">
+            <div class="acc-layout">
+              <!-- 左侧：角色预览 + 配件叠加 -->
+              <div class="acc-preview">
+                <h3 class="section-label">👁️ 角色预览</h3>
+                <div class="canvas-stage" id="accStage">
+                  <canvas id="accCanvas"></canvas>
+                  <div class="stage-placeholder" id="accPlaceholder">
+                    <div class="placeholder-icon">🎨</div>
+                    <p>请先生成像素图</p>
+                  </div>
+                </div>
+                <div class="acc-hint">🖱️ 拖动配件调整位置</div>
+              </div>
+
+              <!-- 右侧：配件浏览器 -->
+              <div class="acc-browser">
+                <h3 class="section-label">🎒 配件库</h3>
+
+                <!-- 分类标签 -->
+                <div class="acc-categories" id="accCategories">
+                  <!-- JS 动态生成 -->
+                </div>
+
+                <!-- 配件列表 -->
+                <div class="acc-grid" id="accGrid">
+                  <!-- JS 动态生成 -->
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="acc-actions">
+                  <div class="acc-scale-row">
+                    <span class="acc-scale-label">🔍 缩放:</span>
+                    <input type="range" id="accScaleSlider" class="pixel-range" min="0.1" max="10" step="0.1" value="1.0" disabled>
+                    <span id="accScaleVal" class="acc-scale-val">1.0x</span>
+                  </div>
+                  <button class="pixel-btn pixel-btn--small" id="removeAccBtn" type="button" disabled>
+                    🗑️ 删除选中
+                  </button>
+                  <button class="pixel-btn pixel-btn--small" id="clearAccBtn" type="button">
+                    🔄 清除全部
+                  </button>
+                  <button class="pixel-btn pixel-btn--primary pixel-btn--large" id="downloadAccBtn"
+                    type="button" style="width:100%; margin-top:8px;">
+                    💾 下载成品
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ====== 底部步骤导航 ====== -->
+    <footer class="step-nav">
+      <button class="pixel-btn pixel-btn--nav" id="prevBtn" type="button" disabled>
+        ◀ 上一步
+      </button>
+
+      <div class="step-progress">
+        <span class="progress-dot active" data-dot="1"></span>
+        <span class="progress-line"></span>
+        <span class="progress-dot" data-dot="2"></span>
+        <span class="progress-line"></span>
+        <span class="progress-dot" data-dot="3"></span>
+        <span class="progress-line"></span>
+        <span class="progress-dot" data-dot="4"></span>
+      </div>
+
+      <button class="pixel-btn pixel-btn--nav" id="nextBtn" type="button">
+        下一步 ▶
+      </button>
+    </footer>
+
+  </div>
+
+  <!-- ====== 脚本（按依赖顺序加载） ====== -->
+  <script src="js/seedream-api.js"></script>
+  <script src="js/prompt-templates.js"></script>
+  <script src="js/accessories.js"></script>
+  <script src="js/bouncing-decorations.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
