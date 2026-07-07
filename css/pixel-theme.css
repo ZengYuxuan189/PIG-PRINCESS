@@ -905,6 +905,22 @@ body::after {
   font-weight: 700;
 }
 
+/* 悬浮预览 */
+.acc-hover-preview {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  background: var(--bg-card);
+  border: 4px solid var(--accent-gold);
+  padding: 6px;
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.6), 0 0 20px rgba(248,184,0,0.2);
+}
+.acc-hover-preview canvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 /* 配件网格 */
 .acc-grid {
   display: grid;

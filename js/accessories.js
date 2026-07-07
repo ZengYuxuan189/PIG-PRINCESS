@@ -672,10 +672,10 @@ function renderAccessoryToCanvas(acc, pixelScale = 3, drawOutline = true) {
 //  配件管理器（支持 0.1x ~ 100x 缩放）
 // ============================================================
 
-/** 基础像素大小：配件定义中每 1 像素 = 5 显示像素 */
-const BASE_PIXEL = 5;
+// 配置常量引用 App.Config（由 config.js 提供）
+const BASE_PIXEL = (window.App && App.Config && App.Config.ACCESSORY_BASE_PIXEL) || 5;
 const MIN_PIXEL = 1;
-const MAX_PIXEL = 100;
+const MAX_PIXEL = (window.App && App.Config && App.Config.ACCESSORY_MAX_PIXEL) || 100;
 
 const AccessoryManager = {
   items: [],
@@ -696,6 +696,8 @@ const AccessoryManager = {
       acc: acc,
       x: x, y: y,
       scale: 1.0,             // 用户缩放倍率 (0.1 ~ 100)
+      flipH: false,           // 水平翻转
+      rotation: 0,            // 旋转角度
       canvas: canvas,         // 基础渲染（BASE_PIXEL）
       scaledCanvas: null,     // 缩放后的缓存
     };
@@ -722,7 +724,27 @@ const AccessoryManager = {
   setScale(index, newScale) {
     if (index >= 0 && index < this.items.length) {
       const item = this.items[index];
-      item.scale = Math.max(0.1, Math.min(10, Math.round(newScale * 10) / 10));
+      const minS = (App.Config && App.Config.ACCESSORY_SCALE_MIN) || 0.1;
+      const maxS = (App.Config && App.Config.ACCESSORY_SCALE_MAX) || 10;
+      item.scale = Math.max(minS, Math.min(maxS, Math.round(newScale * 10) / 10));
+      item.scaledCanvas = _renderScaled(item);
+    }
+  },
+
+  /** 水平翻转指定配件 */
+  flipHorizontal(index) {
+    if (index >= 0 && index < this.items.length) {
+      const item = this.items[index];
+      item.flipH = !item.flipH;
+      item.scaledCanvas = _renderScaled(item);
+    }
+  },
+
+  /** 旋转配件 */
+  setRotation(index, degrees) {
+    if (index >= 0 && index < this.items.length) {
+      const item = this.items[index];
+      item.rotation = Math.max(-180, Math.min(180, Math.round(degrees / 15) * 15));
       item.scaledCanvas = _renderScaled(item);
     }
   },
@@ -767,7 +789,34 @@ const AccessoryManager = {
 function _renderScaled(item) {
   const rawScale = Math.round(BASE_PIXEL * item.scale);
   const effectiveScale = Math.max(MIN_PIXEL, Math.min(MAX_PIXEL, rawScale));
-  return renderAccessoryToCanvas(item.acc, effectiveScale, true);
+  let canvas = renderAccessoryToCanvas(item.acc, effectiveScale, true);
+  // 水平翻转
+  if (item.flipH) {
+    const flipped = document.createElement('canvas');
+    flipped.width = canvas.width; flipped.height = canvas.height;
+    const fctx = flipped.getContext('2d');
+    fctx.imageSmoothingEnabled = false;
+    fctx.translate(canvas.width, 0); fctx.scale(-1, 1);
+    fctx.drawImage(canvas, 0, 0);
+    canvas = flipped;
+  }
+  // 旋转
+  const rot = item.rotation || 0;
+  if (rot !== 0 && isFinite(rot)) {
+    const rad = rot * Math.PI / 180;
+    const cos = Math.abs(Math.cos(rad)), sin = Math.abs(Math.sin(rad));
+    const rw = Math.ceil(canvas.width * cos + canvas.height * sin);
+    const rh = Math.ceil(canvas.width * sin + canvas.height * cos);
+    const rotated = document.createElement('canvas');
+    rotated.width = rw; rotated.height = rh;
+    const rctx = rotated.getContext('2d');
+    rctx.imageSmoothingEnabled = false;
+    rctx.translate(rw / 2, rh / 2);
+    rctx.rotate(-rad);
+    rctx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
+    return rotated;
+  }
+  return canvas;
 }
 
 // ============================================================

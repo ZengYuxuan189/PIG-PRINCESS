@@ -40,7 +40,7 @@ const SEEDREAM_CONFIG = {
 // ============================================================
 
 /** localStorage 存储键 */
-const SEEDREAM_KEY_STORAGE = 'pig_princess_seedream_key';
+const SEEDREAM_KEY_STORAGE = (window.App && App.Config && App.Config.STORAGE_KEY) || 'pixel_princess_seedream_key';
 
 /**
  * 获取已保存的 API Key
